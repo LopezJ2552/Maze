@@ -7,16 +7,22 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody2D rb2d;
     private int count;
-
+    private int lives;
+    public GameObject camera;
     public float speed;
     public Text countText;
+    public Text livesText;
     public Text winText;
     public float jumpForce;
+    public AudioClip winSound;
+    public AudioSource winSource;
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        camera = GameObject.Find("Main Camera");
         count = 0;
+        lives = 3;
         winText.text = "";
         SetAllText ();
     }
@@ -47,6 +53,20 @@ public class PlayerController : MonoBehaviour
             count = count + 1;
             SetAllText ();
         }
+
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            other.gameObject.SetActive (false);
+            lives = lives - 1;
+            SetAllText ();
+        }
+
+        if (count == 4)
+        {
+            transform.position = new Vector2(50.0f, transform.position.y);
+            lives = 3;
+            camera.transform.position = new Vector3(45.0f, 0.0f, -10.0f);
+        }
     }
 
     void OnCollisionStay2D(Collision2D collision)
@@ -63,9 +83,18 @@ public class PlayerController : MonoBehaviour
     void SetAllText ()
     {
         countText.text = "Count: " + count.ToString ();
-        if (count >= 4)
+        livesText.text = "Lives: " + lives.ToString ();
+        if (count >= 8)
         {
             winText.text = "You win!";
+            winSource.clip = winSound;
+            winSource.Play();
+        }
+
+        if (lives == 0)
+        {
+            winText.text = "You lose!";
+            Destroy(gameObject);
         }
     }
 }
