@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - PickUp
   layers:
   - Default
   - TransparentFX
@@ -47,6 +48,9 @@ TagManager:
     locked: 0
   - name: Ground
     uniqueID: 3821936655
+    locked: 0
+  - name: Pickups
+    uniqueID: 760699005
     locked: 0
   - name: Player
     uniqueID: 1371189355
