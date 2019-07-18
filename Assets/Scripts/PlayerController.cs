@@ -16,14 +16,18 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
     public AudioClip winSound;
     public AudioSource winSource;
+    private bool facingRight = true;
+     Animator anim;
     // Start is called before the first frame update
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator> ();
         camera = GameObject.Find("Main Camera");
         count = 0;
         lives = 3;
         winText.text = "";
+        
         SetAllText ();
     }
 
@@ -43,6 +47,16 @@ public class PlayerController : MonoBehaviour
         Vector2 movement = new Vector2(moveHorizontal, 0);
 
         rb2d.AddForce(movement * speed);
+
+        if (facingRight == false && moveHorizontal > 0)
+        {
+            Flip();
+        }
+        else if (facingRight == true && moveHorizontal < 0)
+        {
+            Flip();
+        }
+
     }
 
     void OnTriggerEnter2D (Collider2D other)
@@ -77,9 +91,35 @@ public class PlayerController : MonoBehaviour
             {
                 rb2d.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             }
+            
+            if (Input.GetKey (KeyCode.RightArrow))
+            {
+                anim.SetInteger("State", 1);
+            }
+
+            if (Input.GetKey (KeyCode.LeftArrow))
+            {
+                anim.SetInteger("State", 1);
+            }
+
+            if (Input.GetKey (KeyCode.UpArrow))
+            {
+                anim.SetInteger("State", 2);
+            }
+        }
+        else
+        {
+             anim.SetInteger("State", 2);
         }
     }
     
+    void LateUpdate ()
+    {
+        if (!Input.anyKey)
+        {
+            anim.SetInteger("State", 0);
+        }
+    }
     void SetAllText ()
     {
         countText.text = "Count: " + count.ToString ();
@@ -96,5 +136,13 @@ public class PlayerController : MonoBehaviour
             winText.text = "You lose!";
             Destroy(gameObject);
         }
+    }
+
+    void Flip()
+{
+        facingRight = !facingRight;
+        Vector2 Scaler = transform.localScale;
+        Scaler.x = Scaler.x * -1;
+        transform.localScale = Scaler;
     }
 }
